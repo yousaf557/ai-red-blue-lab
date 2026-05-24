@@ -436,3 +436,51 @@ tinyllama does **not** possess the generation-level circuit breaker found in phi
 
 ### Conclusion
 The circuit breaker is a Microsoft-specific fine-tuning addition, not a general property of small transformer models. phi3:mini's anti-extraction defense is currently state-of-the-art among small open-weight models.
+---
+
+## Future Research Roadmap: Evading the Circuit Breaker
+
+**Date:** May 24, 2026
+**Status:** Research proposal — not yet executed
+
+Based on the campaign findings (Days 1-5), five novel attack vectors have been designed to target potential weaknesses in phi3:mini's generation-level circuit breaker. Each vector is a direct evolution of a specific finding from the completed campaign.
+
+### Strategy Origins
+
+| Campaign Finding | Derived Attack Vector |
+|------------------|----------------------|
+| Continuation leak extracted "You are a helpful" before stop condition | Incremental Token Reconstruction |
+| Split-command bypassed Layers 1-2 in all variants | Contextual Obfuscation |
+| EPFL attack (100% ASR) failed on prompt extraction | Fuzz Testing the Defensive Threshold |
+| phi3 has a circuit breaker; tinyllama does not | Structured Metadata Probing |
+| Model crashes instead of refusing — no refusal text | Side-Channel Analysis |
+
+### Attack Summaries
+
+#### 1. Incremental Token Reconstruction
+Extract the prompt one token at a time using `max_tokens=1`, `temperature=0.0`. Hypothesis: the breaker detects long coherent strings, not single tokens.
+
+#### 2. Structured Metadata Probing
+Ask *about* the prompt rather than asking for it. Character count, keyword presence, structural questions. Hypothesis: the breaker blocks content reproduction, not logical reasoning.
+
+#### 3. Contextual Obfuscation
+Embed extraction inside a long, plausible multi-turn narrative. Hypothesis: diluting malicious intent across context may lower the breaker's risk score.
+
+#### 4. Side-Channel Analysis
+Measure `eval_duration` and `eval_count` to detect delays caused by breaker activation. Hypothesis: the crash itself leaks information through timing side-channels.
+
+#### 5. Fuzz Testing the Defensive Threshold
+Systematically vary prompt directness, context depth, extraction length, and sampling parameters to map the breaker's exact activation boundary. Hypothesis: a "safe zone" exists where extraction succeeds below the threshold.
+
+### Implementation Priority
+1. Fuzz Testing (foundational intelligence)
+2. Incremental Token Reconstruction (highest extraction potential)
+3. Structured Metadata Probing (safest approach)
+4. Contextual Obfuscation (refinement of proven technique)
+5. Side-Channel Analysis (requires statistical rigor)
+
+### Next Steps
+- Implement fuzzing matrix script
+- Execute incremental token extraction on known prefix
+- Cross-reference all results against phi3 vs tinyllama comparison data
+
