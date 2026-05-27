@@ -1,6 +1,6 @@
 # AI Red-Team Findings: Phi-3 Mini (Local Deployment)
 
-**Tester:** [Your Name]
+**Tester:** [Yousaf]
 **Model:** phi3:mini (3.8B, 4-bit quantized, CPU-only)
 **Hardware:** Core i3 2nd Gen, 16 GB RAM, Kali Linux VM
 **Dates:** May 20-21, 2026
